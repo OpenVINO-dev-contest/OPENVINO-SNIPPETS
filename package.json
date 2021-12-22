@@ -1,0 +1,22 @@
+{
+    "name": "openvino-snippets",
+    "displayName": "OpenVINO Snippets",
+    "description": "OpenVINO Snippets for VScode",
+    "version": "0.0.3",
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "categories": [
+        "Snippets"
+    ],
+    "icon": "image/logo.png",
+    "publisher": "Snakegun",
+    "contributes": {
+        "snippets": [
+            {
+                "language": "python",
+                "path": "./snippets/snippets.json"
+            }
+        ]
+    }
+}
