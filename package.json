@@ -2,10 +2,14 @@
     "name": "openvino-snippets",
     "displayName": "OpenVINO Snippets",
     "description": "OpenVINO Snippets for VScode",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "engines": {
         "vscode": "^1.63.0"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Openvino-dev-contest/OPENVINO-SNIPPETS"
+      },
     "categories": [
         "Snippets"
     ],
