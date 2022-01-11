@@ -39,7 +39,7 @@
 		"prefix": "ov:loadnetwork",
 		"body": [
 			"net = ie.read_network(model=\"${1:.xml}\")",
-			"exec_net_onnx = ie.load_network(network=${1:net_onnx}, device_name=\"${2:CPU}\", num_requests=${3:1})"
+			"exec_net = ie.load_network(network=net, device_name=\"${1:CPU}\", config=${2:config}, num_requests=${3:2})"
 		],
 		"description": "Reading and Loading a Model"
 	},
