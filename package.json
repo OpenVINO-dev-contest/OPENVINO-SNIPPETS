@@ -2,7 +2,7 @@
     "name": "openvino-snippets",
     "displayName": "OpenVINO Snippets",
     "description": "OpenVINO Snippets for VScode",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "engines": {
         "vscode": "^1.63.0"
     },

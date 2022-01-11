@@ -13,17 +13,22 @@
 		],
 		"description": "Initialize Inference Engine with IECore()"
 	},
-	"Inference Engine Config ": {
-		"prefix": "ov:config",
+	"Set throughput streams ": {
+		"prefix": "ov:streams",
 		"body": [
-			"ie.set_config(${1:config[${2:device}]},${2:device})"
+			"config={}",
+			"device=${1:\"CPU\"}",
+			"key = device + ${2:\"THROUGHPUT_STREAMS\"}",
+			"config[device] = {}",
+			"config[device][key] = ${3:\"2\"}",
+			"ie.set_config(config[device],device)"
 		],
-		"description": "set Inference Engine configuration"
+		"description": "set throughput streams"
 	},
-	"Available_devices": {
+	"Available devices": {
 		"prefix": "ov:device",
 		"body": [
-			"devices = ie.available_devices,",
+			"devices = ie.available_devices",
 			"for device in devices:",
 				"\tdevice_name = ie.get_metric(device_name=device, metric_name=\"FULL_DEVICE_NAME\")",
 				"\tprint(f\"{device}: {device_name}\")"

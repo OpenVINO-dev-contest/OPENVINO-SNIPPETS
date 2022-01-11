@@ -23,7 +23,7 @@ The extension snippets sets includes:
 <a name="installation"></a>
 
 Install Visual Studio Code from [here](https://code.visualstudio.com/).
-Install this extension by selecting `Install Extension` in the command pallette (cmd-shift-p) and searching for "OpenVINO Snippets".
+Install this extension by selecting `Install Extension` in the command pallette (cmd-shift-x) and searching for "OpenVINO Snippets".
 
 The generated code also relies on the following python dependencies:
 ```bash
