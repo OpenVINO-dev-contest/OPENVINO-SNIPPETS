@@ -74,7 +74,7 @@
 	"Do async inference": {
 		"prefix": "ov:async_infer",
 		"body": [
-			"exec_net.request[${1:0}].async_infer(inputs={${2:input_layer}: ${3:input_data}})",
+			"exec_net.requests[${1:0}].async_infer(inputs={${2:input_layer}: ${3:input_data}})",
 			"if exec_net.requests[${1:0}].wait(-1)==0:",
 			"\tresult = exec_net.requests[${1:0}].output_blobs[${4:output_layer}].buffer"
 		],
