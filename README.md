@@ -8,7 +8,7 @@ The extension snippets sets includes:
 
 - `ov:import`: Import OpenVINO package.
 - `ov:core`: Initialize Inference Engine with IECore().
-- `ov:config`: set Inference Engine configuration.
+- `ov:streams`: set throughput streams.
 - `ov:device`: Show available_devices in your computer.
 - `ov:loadnetwork`: Reading and Loading a Model.
 - `ov:inputinfo`: Get model input information.
