@@ -6,6 +6,7 @@ This extension includes a set of useful code snippets for developing OpenVINO.Al
 
 The extension snippets sets includes:
 
+- `ov:example`: Sample Code for Image Classification.
 - `ov:import`: Import OpenVINO package.
 - `ov:core`: Initialize Inference Engine with IECore().
 - `ov:streams`: set throughput streams.
