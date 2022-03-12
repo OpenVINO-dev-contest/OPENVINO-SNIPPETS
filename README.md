@@ -8,16 +8,15 @@ The extension snippets sets includes:
 
 - `ov:example`: Sample Code for Image Classification.
 - `ov:import`: Import OpenVINO package.
-- `ov:core`: Initialize Inference Engine with IECore().
-- `ov:streams`: set throughput streams.
+- `ov:core`: Initialize OpenVINO with Core().
 - `ov:device`: Show available_devices in your computer.
 - `ov:loadnetwork`: Reading and Loading a Model.
 - `ov:inputinfo`: Get model input information.
 - `ov:outputinfo`: Get model output information.
 - `ov:sync_infer`: Doing a sync inference.
-- `ov:async_infer`: Doing async inference and waiting for the result is ready.
+- `ov:ppp`: Integrate Preprocessing steps into execution graph.
 - `ov:reshape`: Change model input shape.
-- `ov:batchsize`: set model's batch_size.
+- `ov:queue`: Create infer request queue.
 - `ov:caching`: create a model_cache directory as a subdirectory of model, where the model will be cached for the specified device.
 
 ## Installation
