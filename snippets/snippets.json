@@ -39,6 +39,14 @@
 		],
 		"description": "Import OpenVINO library"
 	},
+	"Reshape dynamic input": {
+		"prefix": "ov:dynamic",
+		"body": [
+			"input_shape[3] = Dimension(-1)",
+			"net.reshape({input_layer: input_shape})"
+		],
+		"description": "Declare the dimension of dynamic input shape"
+	},
 	"Initialize Inference Engine": {
 		"prefix": "ov:core",
 		"body": [
@@ -93,7 +101,7 @@
 		],
 		"description": "Doing sync inference"
 	},
-	"Do async inference": {
+	"Infer request queue": {
 		"prefix": "ov:queue",
 		"body": [
 			"def callback(infer_request: InferRequest, ${1:userdata}) -> None:",

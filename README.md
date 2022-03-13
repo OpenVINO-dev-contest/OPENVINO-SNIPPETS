@@ -8,6 +8,7 @@ The extension snippets sets includes:
 
 - `ov:example`: Sample Code for Image Classification.
 - `ov:import`: Import OpenVINO package.
+- `ov:dynamic`: Declare the dimension of dynamic input shape.
 - `ov:core`: Initialize OpenVINO with Core().
 - `ov:device`: Show available_devices in your computer.
 - `ov:loadnetwork`: Reading and Loading a Model.
