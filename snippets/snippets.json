@@ -8,7 +8,7 @@
 			"",
 			"ie = Core()",
 			"model = ie.read_model(model=${1:'model/v3-small_224_1.0_float.xml'}}",
-			"compiled_model = ie.compile_model(network=${1:model}, device_name=${2:'CPU'})",
+			"compiled_model = ie.compile_model(model=${1:model}, device_name=${2:'CPU'})",
 			"",
 			"input_layer = next(iter(compiled_model.outputs))",
 			"output_layer = next(iter(compiled_model.inputs))",
@@ -68,7 +68,7 @@
 		"prefix": "ov:loadnetwork",
 		"body": [
 			"model = ie.read_model(model=\"${1:.xml}\")",
-			"compiled_model = ie.compile_model(network=net, device_name=\"${2:CPU}\")"
+			"compiled_model = ie.compile_model(model=model, device_name=\"${2:CPU}\")"
 		],
 		"description": "Reading and Loading a Model"
 	},
