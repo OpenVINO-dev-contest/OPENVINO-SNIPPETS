@@ -33,7 +33,7 @@
 		"description": "Image Classification Example"
 	},
 	"Initialize OpenVINO": {
-		"prefix": "ov:import",
+		"prefix": "ov:init",
 		"body": [
 			"from openvino.runtime import Core, PartialShape",
 			"ie = Core()"
