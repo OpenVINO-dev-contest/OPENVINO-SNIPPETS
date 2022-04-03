@@ -8,23 +8,23 @@
 			"",
 			"ie = Core()",
 			"model = ie.read_model(model=${1:'model/v3-small_224_1.0_float.xml'}}",
-			"compiled_model = ie.compile_model(model=${1:model}, device_name=${2:'CPU'})",
+			"compiled_model = ie.compile_model(model=model, device_name=${2:'CPU'})",
 			"",
-			"input_layer = next(iter(compiled_model.outputs))",
-			"output_layer = next(iter(compiled_model.inputs))",
+			"input_layer = compiled_model.input(0)",
+			"output_layer = compiled_model.output(0)",
 			"",
 			"# The MobileNet network expects images in RGB format",
-			"image = cv2.cvtColor(cv2.imread(filename=${1:'data/coco.jpg'}), code=cv2.COLOR_BGR2RGB)",
+			"image = cv2.cvtColor(cv2.imread(filename=${3:'data/coco.jpg'}), code=cv2.COLOR_BGR2RGB)",
 			"# resize to MobileNet image shape",
 			"input_image = cv2.resize(src=image, dsize=(224, 224))",
 			"# reshape to network input shape",
 			"input_image = np.expand_dims(input_image.transpose(2, 0, 1), 0)",
 			"",
-			"result = compiled_model(inputs=[input_image])[output_layer]",
+			"result = compiled_model([input_image])[output_layer]",
 			"result_index = np.argmax(result)",
 			"",
 			"# Convert the inference result to a class name.",
-			"imagenet_classes = open(${3:'utils/imagenet_2012.txt'}).read().splitlines()",
+			"imagenet_classes = open(${4:'utils/imagenet_2012.txt'}).read().splitlines()",
 			"# The model description states that for this model, class 0 is background,",
 			"# so we add background at the beginning of imagenet_classes",
 			"imagenet_classes = ['background'] + imagenet_classes",
@@ -32,27 +32,13 @@
 		],
 		"description": "Image Classification Example"
 	},
-	"Import OpenVINO": {
+	"Initialize OpenVINO": {
 		"prefix": "ov:import",
 		"body": [
-			"from openvino.runtime import Core"
-		],
-		"description": "Import OpenVINO library"
-	},
-	"Reshape dynamic input": {
-		"prefix": "ov:dynamic",
-		"body": [
-			"input_shape[3] = Dimension(-1)",
-			"net.reshape({input_layer: input_shape})"
-		],
-		"description": "Declare the dimension of dynamic input shape"
-	},
-	"Initialize Inference Engine": {
-		"prefix": "ov:core",
-		"body": [
+			"from openvino.runtime import Core, PartialShape",
 			"ie = Core()"
 		],
-		"description": "Initialize OpenVINO with Core()"
+		"description": "Import OpenVINO library"
 	},
 	"Available devices": {
 		"prefix": "ov:device",
@@ -76,7 +62,7 @@
 		"prefix": "ov:inputinfo",
 		"body": [
 			"model.inputs[0].any_name",
-			"input_layer = next(iter(model.inputs))",
+			"input_layer = model.input(0)",
 			"print(f\"input precision: {input_layer.element_type}\")",
 			"print(f\"input shape: {input_layer.shape}\")"
 		],
@@ -86,7 +72,7 @@
 		"prefix": "ov:outputinfo",
 		"body": [
 			"model.outputs[0].any_name",
-			"output_layer = next(iter(model.outputs))",
+			"output_layer = model.output(0)",
 			"print(f\"output precision: {output_layer.element_type}\")",
 			"print(f\"output shape: {output_layer.shape}\")"
 		],
@@ -96,7 +82,7 @@
 		"prefix": "ov:sync_infer",
 		"body": [
 			"request = compiled_model.create_infer_request()",
-			"request.infer(inputs={input_layer.any_name: input_data})",
+			"request.infer(inputs={model.inputs[0].any_name: input_data})",
 			"result = request.get_output_tensor(output_layer.index).data"
 		],
 		"description": "Doing sync inference"
