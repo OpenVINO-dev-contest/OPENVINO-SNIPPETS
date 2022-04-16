@@ -6,10 +6,16 @@
 			"import numpy as np",
 			"from openvino.runtime import Core",
 			"",
+			"# --------------------------- Step 1. Initialize OpenVINO Runtime Core ------------------------------------------------",
 			"ie = Core()",
+			"",
+			"# --------------------------- Step 2. Read a model --------------------------------------------------------------------",
 			"model = ie.read_model(model=${1:'model/v3-small_224_1.0_float.xml'}}",
+			"",
+			"# --------------------------- Step 3. Loading model to the device -----------------------------------------------------",
 			"compiled_model = ie.compile_model(model=model, device_name=${2:'CPU'})",
 			"",
+			"# --------------------------- Step 4. prepare the input ---------------------------------------------------------------",
 			"input_layer = compiled_model.input(0)",
 			"output_layer = compiled_model.output(0)",
 			"",
@@ -20,9 +26,11 @@
 			"# reshape to network input shape",
 			"input_image = np.expand_dims(input_image.transpose(2, 0, 1), 0)",
 			"",
+			"# --------------------------- Step 5. Do inference ---------------------------------------------------------------",
 			"result = compiled_model([input_image])[output_layer]",
-			"result_index = np.argmax(result)",
 			"",
+			"# --------------------------- Step 6. Process output ---------------------------------------------------------------",
+			"result_index = np.argmax(result)",
 			"# Convert the inference result to a class name.",
 			"imagenet_classes = open(${4:'utils/imagenet_2012.txt'}).read().splitlines()",
 			"# The model description states that for this model, class 0 is background,",
@@ -30,7 +38,7 @@
 			"imagenet_classes = ['background'] + imagenet_classes",
 			"imagenet_classes[result_index]"
 		],
-		"description": "Image Classification Example"
+		"description": "Workflow Example"
 	},
 	"Initialize OpenVINO": {
 		"prefix": "ov:init",
@@ -38,7 +46,7 @@
 			"from openvino.runtime import Core, PartialShape",
 			"ie = Core()"
 		],
-		"description": "Import OpenVINO library"
+		"description": "Create OpenVINO Runtime Core"
 	},
 	"Available devices": {
 		"prefix": "ov:device",
@@ -50,15 +58,15 @@
 		],
 		"description": "Show available_devices"
 	},
-	"Loading a Model": {
-		"prefix": "ov:loadnetwork",
+	"Compile the Model": {
+		"prefix": "ov:compile",
 		"body": [
 			"model = ie.read_model(model=\"${1:.xml}\")",
-			"compiled_model = ie.compile_model(model=model, device_name=\"${2:CPU}\")"
+			"compiled_model = ie.compile_model(model=model, device_name=\"${2:CPU}\", config={\"PERFORMANCE_HINT\": \"${3:LATENCY}\"})"
 		],
 		"description": "Reading and Loading a Model"
 	},
-	"Model Input": {
+	"Input Information": {
 		"prefix": "ov:inputinfo",
 		"body": [
 			"model.inputs[0].any_name",
@@ -68,7 +76,7 @@
 		],
 		"description": "Get model input information"
 	},
-	"Model Output": {
+	"Output Information": {
 		"prefix": "ov:outputinfo",
 		"body": [
 			"model.outputs[0].any_name",
@@ -78,34 +86,56 @@
 		],
 		"description": "Get model output information"
 	},
-	"Do sync inference": {
-		"prefix": "ov:sync_infer",
+	"Infer Request": {
+		"prefix": "ov:request",
 		"body": [
-			"request = compiled_model.create_infer_request()",
-			"request.infer(inputs={model.inputs[0].any_name: input_data})",
-			"result = request.get_output_tensor(output_layer.index).data"
+			"request = compiled_model.create_infer_request()"
 		],
-		"description": "Doing sync inference"
+		"description": "Create an Inference Request"
+	},
+	"Do inference": {
+		"prefix": "ov:infer",
+		"body": [
+			"request.infer(inputs={model.inputs[0].any_name: input_data})",
+			"result = request.get_output_tensor(output_layer.index).data",
+			"# result = compiled_model([input_image])[output_layer]"
+		],
+		"description": "Do inference synchronously"
 	},
 	"Infer request queue": {
 		"prefix": "ov:queue",
 		"body": [
-			"def callback(infer_request: InferRequest, ${1:userdata}) -> None:",
+			"def callback(infer_request: InferRequest, ${1:i}) -> None:",
 				"\tpredictions = next(iter(infer_request.results.values()))",
+			"# Number of InferRequests that AsyncInferQueue holds",
 			"infer_queue = AsyncInferQueue(${2:compiled_model}, ${3:4})",
 			"infer_queue.set_callback(callback)",
-			"infer_queue.start_async(${4:{0: input_tensor}}, ${1:userdata})",
+			"for i in range(len(data)):",
+				"\tinfer_queue.start_async({0: data[i], 1: data[i]}, userdata=${1:i})",
 			"infer_queue.wait_all()"
 		],
-		"description": "Create infer request queue"
+		"description": "Create infer request queue and do async inference"
 	},
-	"Change model input shape": {
+	"Change input shape": {
 		"prefix": "ov:reshape",
 		"body": [
-			"new_shape = PartialShape(${1:[1, 3, 544, 544]})",
+			"idx_to_shape = dict()",
+			"i = 0",
+			"for input_obj in model.inputs:",
+    			"\tshape = input_obj.get_partial_shape()",
+    			"\tidx_to_shape[i] = shape",
+    			"\ti += 1",
+			"model.reshape(idx_to_shape)"
+		],
+		"description": "Change input shape"
+	},
+	"Dynamic shape": {
+		"prefix": "ov:dynamic",
+		"body": [
+			"new_shape = PartialShape(${1:[-1, 3, 544, 544]})",
 			"model.reshape({input_layer.any_name: new_shape})"
 		],
-		"description": "Change model input shape"
+		"description": "Configure the dynamic input shape"
 	},
 	"Caching a Model": {
 		"prefix": "ov:caching",

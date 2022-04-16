@@ -2,7 +2,7 @@
     "name": "openvino-snippets",
     "displayName": "OpenVINO Snippets",
     "description": "OpenVINO Snippets for VScode",
-    "version": "0.2.4",
+    "version": "1.0.0",
     "engines": {
         "vscode": "^1.63.0"
     },
@@ -19,7 +19,11 @@
         "snippets": [
             {
                 "language": "python",
-                "path": "./snippets/snippets.json"
+                "path": "./snippets/snippets_python.json"
+            },
+            {
+                "language": "cpp",
+                "path": "./snippets/snippets_cpp.json"
             }
         ]
     }

@@ -1,0 +1,158 @@
+{
+	"Sample Code for Image Classification": {
+		"prefix": "ov:example",
+		"body": [
+			"#include \"openvino/openvino.hpp\"",
+			"// -------- Step 1. Initialize OpenVINO Runtime Core --------",
+			"ov::Core core;",
+			"// -------- Step 2. Read a model --------",
+			"std::shared_ptr<ov::Model> model = core.read_model(model_path);",
+			"// -------- Step 3. Set up input --------",
+			"ov::Tensor input_tensor = ov::Tensor(input_type, input_shape, input_data.get());",
+			"// -------- Step 4. Loading a model to the device --------",
+			"ov::CompiledModel compiled_model = core.compile_model(model, device_name);",
+			"// -------- Step 5. Create an infer request --------",
+			"ov::InferRequest infer_request = compiled_model.create_infer_request();",
+			"// -------- Step 6. Prepare input --------",
+			"infer_request.set_input_tensor(input_tensor);",
+			"// -------- Step 7. Do inference synchronously --------",
+			"infer_request.infer();",
+			"// -------- Step 8. Process output --------",
+			"auto output = infer_request.get_tensor(\"tensor_name\");",
+			"const float *output_buffer = output.data<const float>();"
+		],
+		"description": "Workflow Example"
+	},
+	"Initialize OpenVINO": {
+		"prefix": "ov:init",
+		"body": [
+			"#include <openvino/openvino.hpp>",
+			"// #include <openvino/runtime/core.hpp>",
+			"// #include <openvino/core/preprocess/pre_post_process.hpp>",
+			"// #include <openvino/pass/serialize.hpp>",
+			"ov::Core core;"
+		],
+		"description": "Create OpenVINO Runtime Core"
+	},
+	"Available devices": {
+		"prefix": "ov:device",
+		"body": [
+			"std::vector<std::string> availableDevices = core.get_available_devices();",
+			"for (auto&& device : availableDevices) {",
+				"\tauto supported_properties = core.get_property(device, ov::supported_properties);",
+				"\tfor (auto&& property : supported_properties) {",
+					"\t\tprint_any_value(core.get_property(device, property));",
+				"\t}",
+			"}"
+		],
+		"description": "Show available_devices"
+	},
+	"Compile a Model": {
+		"prefix": "ov:compile",
+		"body": [
+			"std::shared_ptr<ov::Model> model = core.read_model({1:model_path});",
+			"ov::CompiledModel compiled_model = core.compile_model(model, \"${2:AUTO}\");"
+		],
+		"description": "Reading and Loading a Model"
+	},
+	"Infer Request": {
+		"prefix": "ov:request",
+		"body": [
+			"ov::InferRequest infer_request = compiled_model.create_infer_request();"
+		],
+		"description": "Create an infer request"
+	},
+	"Prepare input": {
+		"prefix": "ov:input",
+		"body": [
+			"auto input_port = compiled_model.input();",
+			"ov::Tensor input_tensor(input_port.get_element_type(), input_port.get_shape(), {1:memory_ptr});",
+			"infer_request.set_input_tensor(input_tensor);"
+		],
+		"description": "Create an infer request"
+	},
+	"Input Information": {
+		"prefix": "ov:inputinfo",
+		"body": [
+			"ov::Shape tensor_shape = model->input().get_shape();",
+			"ov::element::Type tensor_type = model->input().get_element_type();"
+		],
+		"description": "Get model input information"
+	},
+	"Output Information": {
+		"prefix": "ov:outputinfo",
+		"body": [
+			"ov::Shape output_shape = model->output().get_shape();",
+			"const size_t ssd_object_count = output_shape[2];",
+        	"const size_t ssd_object_size = output_shape[3];"
+		],
+		"description": "Get model output information"
+	},
+	"Do inference": {
+		"prefix": "ov:infer",
+		"body": [
+			"infer_request.infer();",
+			"infer_request.start_async();",
+			"infer_request.wait();"
+		],
+		"description": "Do inference"
+	},
+	"Process output": {
+		"prefix": "ov:output",
+		"body": [
+			"auto output = infer_request.get_tensor({1:\"tensor_name\"});",
+			"const float *output_buffer = output.data<const float>();"
+		],
+		"description": "Process output data"
+	},
+	"Change input shape": {
+		"prefix": "ov:reshape",
+		"body": [
+			"size_t i = 0;",
+			"std::map<size_t, ov::PartialShape> idx_to_shape;",
+			"for (const ov::Output<ov::Node>& input : model->inputs()) {",
+				"\tov::PartialShape shape = input.get_partial_shape();",
+				"\tidx_to_shape[i++] = shape;",
+			"}",
+			"model->reshape(idx_to_shape);",
+			"// model->reshape({8, 3, 448, 448});"
+		],
+		"description": "Change input shape"
+	},
+	"Dynamic shape": {
+		"prefix": "ov:dynamic",
+		"body": [
+			"model->reshape({{1, ov::Dimension()}}); ",
+			"// model->reshape({{ov::Dimension(1, 10), ov::Dimension(8, 512)}})"
+		],
+		"description": "Configure the dynamic input shape"
+	},
+	"Caching a Model": {
+		"prefix": "ov:caching",
+		"body": [
+			"core.set_property(ov::cache_dir({1:\"path_to_cache_dir\"}));"
+		],
+		"description": "create a model_cache directory as a subdirectory of model, where the model will be cached for the specified device"
+	},
+	"Preprocessing API": {
+		"prefix": "ov:ppp",
+		"body": [
+			"ov::preprocess::PrePostProcessor prep(model);",
+			"prep.input().tensor()",
+       			"/t.set_element_type(ov::element::u8)",
+       			"/t.set_layout(\"NHWC\")",
+       			"/t.set_color_format(ov::preprocess::ColorFormat::BGR)",
+       			"/t.set_spatial_dynamic_shape();",
+			"prep.input().model()",
+       			"/t.set_layout(\"NCHW\");",
+			"prep.input().preprocess()",
+				"/t.convert_element_type()",
+				"/t.convert_color(ov::preprocess::ColorFormat::RGB)",
+				"/t.resize(ov::preprocess::ResizeAlgorithm::RESIZE_LINEAR)",
+				"/t.mean({123.675, 116.28, 103.53})",
+				"/t.scale({58.624, 57.12, 57.375});",
+			"model = prep.build();"
+		],
+		"description": "Integrate Preprocessing steps into execution graph"
+	}
+}
