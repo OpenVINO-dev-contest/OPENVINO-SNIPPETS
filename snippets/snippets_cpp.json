@@ -50,7 +50,7 @@
 	"Compile a Model": {
 		"prefix": "ov:compile",
 		"body": [
-			"std::shared_ptr<ov::Model> model = core.read_model({1:model_path});",
+			"std::shared_ptr<ov::Model> model = core.read_model(${1:model_path});",
 			"ov::CompiledModel compiled_model = core.compile_model(model, \"${2:AUTO}\");"
 		],
 		"description": "Reading and Loading a Model"
@@ -66,7 +66,7 @@
 		"prefix": "ov:input",
 		"body": [
 			"auto input_port = compiled_model.input();",
-			"ov::Tensor input_tensor(input_port.get_element_type(), input_port.get_shape(), {1:memory_ptr});",
+			"ov::Tensor input_tensor(input_port.get_element_type(), input_port.get_shape(), ${1:memory_ptr});",
 			"infer_request.set_input_tensor(input_tensor);"
 		],
 		"description": "Create an infer request"
@@ -92,15 +92,15 @@
 		"prefix": "ov:infer",
 		"body": [
 			"infer_request.infer();",
-			"infer_request.start_async();",
-			"infer_request.wait();"
+			"// infer_request.start_async();",
+			"// infer_request.wait();"
 		],
 		"description": "Do inference"
 	},
 	"Process output": {
 		"prefix": "ov:output",
 		"body": [
-			"auto output = infer_request.get_tensor({1:\"tensor_name\"});",
+			"auto output = infer_request.get_tensor(${1:\"tensor_name\"});",
 			"const float *output_buffer = output.data<const float>();"
 		],
 		"description": "Process output data"
@@ -130,7 +130,7 @@
 	"Caching a Model": {
 		"prefix": "ov:caching",
 		"body": [
-			"core.set_property(ov::cache_dir({1:\"path_to_cache_dir\"}));"
+			"core.set_property(ov::cache_dir(${1:\"path_to_cache_dir\"}));"
 		],
 		"description": "create a model_cache directory as a subdirectory of model, where the model will be cached for the specified device"
 	},
@@ -139,18 +139,18 @@
 		"body": [
 			"ov::preprocess::PrePostProcessor prep(model);",
 			"prep.input().tensor()",
-       			"/t.set_element_type(ov::element::u8)",
-       			"/t.set_layout(\"NHWC\")",
-       			"/t.set_color_format(ov::preprocess::ColorFormat::BGR)",
-       			"/t.set_spatial_dynamic_shape();",
+       			"\t.set_element_type(ov::element::u8)",
+       			"\t.set_layout(\"NHWC\")",
+       			"\t.set_color_format(ov::preprocess::ColorFormat::BGR)",
+       			"\t.set_spatial_dynamic_shape();",
 			"prep.input().model()",
-       			"/t.set_layout(\"NCHW\");",
+       			"\t.set_layout(\"NCHW\");",
 			"prep.input().preprocess()",
-				"/t.convert_element_type()",
-				"/t.convert_color(ov::preprocess::ColorFormat::RGB)",
-				"/t.resize(ov::preprocess::ResizeAlgorithm::RESIZE_LINEAR)",
-				"/t.mean({123.675, 116.28, 103.53})",
-				"/t.scale({58.624, 57.12, 57.375});",
+				"\t.convert_element_type()",
+				"\t.convert_color(ov::preprocess::ColorFormat::RGB)",
+				"\t.resize(ov::preprocess::ResizeAlgorithm::RESIZE_LINEAR)",
+				"\t.mean({123.675, 116.28, 103.53})",
+				"\t.scale({58.624, 57.12, 57.375});",
 			"model = prep.build();"
 		],
 		"description": "Integrate Preprocessing steps into execution graph"
