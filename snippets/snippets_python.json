@@ -98,7 +98,9 @@
 		"body": [
 			"request.infer(inputs={model.inputs[0].any_name: input_data})",
 			"result = request.get_output_tensor(output_layer.index).data",
-			"# result = compiled_model([input_image])[output_layer]"
+			"# result = compiled_model([input_image])",
+			"# output_key = compiled_model.output(model.outputs[0].any_name)",
+			"# res = result[output_key ][0]"
 		],
 		"description": "Do inference synchronously"
 	},
