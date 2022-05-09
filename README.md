@@ -12,8 +12,8 @@ The extension snippets sets includes:
 - `ov:compile`: Reading and Loading a Model.
 - `ov:inputinfo`: Get model input information.
 - `ov:outputinfo`: Get model output information.
-- `ov:input`: Prepare input data (cpp).
-- `ov:output`: Process output data (cpp).
+- `ov:input`: Set input tensor.
+- `ov:output`: Process output tensor.
 - `ov:request`: Create an Inference Request
 - `ov:infer`: Do inference synchronously.
 - `ov:ppp`: Integrate Preprocessing steps into execution graph.

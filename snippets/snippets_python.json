@@ -66,6 +66,22 @@
 		],
 		"description": "Reading and Loading a Model"
 	},
+	"Set input": {
+		"prefix": "ov:input",
+		"body": [
+			"input_tensor = ov.Tensor(np.ones(shape=(2,8)))",
+			"request.set_input_tensor(input_tensor)",
+			"request.set_tensor(\"tensor_name\", input_tensor)"
+		],
+		"description": "Set the input tensor"
+	},
+	"Process output": {
+		"prefix": "ov:output",
+		"body": [
+			"output_tensor = request.get_output_tensor(0)"
+		],
+		"description": "Process output tensor"
+	},
 	"Input Information": {
 		"prefix": "ov:inputinfo",
 		"body": [
@@ -97,10 +113,12 @@
 		"prefix": "ov:infer",
 		"body": [
 			"request.infer(inputs={model.inputs[0].any_name: input_data})",
-			"result = request.get_output_tensor(output_layer.index).data",
+			"# request.start_async()",
+			"# request.wait()",
+			"result = request.get_output_tensor(0).data",
 			"# result = compiled_model([input_image])",
 			"# output_key = compiled_model.output(model.outputs[0].any_name)",
-			"# res = result[output_key ][0]"
+			"# res = result[output_key][0]"
 		],
 		"description": "Do inference synchronously"
 	},
@@ -108,7 +126,7 @@
 		"prefix": "ov:queue",
 		"body": [
 			"def callback(infer_request: InferRequest, ${1:i}) -> None:",
-				"\tpredictions = next(iter(infer_request.results.values()))",
+				"\treslut = infer_request.get_output_tensor(0).data",
 			"# Number of InferRequests that AsyncInferQueue holds",
 			"infer_queue = AsyncInferQueue(${2:compiled_model}, ${3:4})",
 			"infer_queue.set_callback(callback)",

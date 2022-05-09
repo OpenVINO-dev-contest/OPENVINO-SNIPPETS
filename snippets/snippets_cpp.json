@@ -62,14 +62,14 @@
 		],
 		"description": "Create an infer request"
 	},
-	"Prepare input": {
+	"Set input": {
 		"prefix": "ov:input",
 		"body": [
 			"auto input_port = compiled_model.input();",
 			"ov::Tensor input_tensor(input_port.get_element_type(), input_port.get_shape(), ${1:memory_ptr});",
 			"infer_request.set_input_tensor(input_tensor);"
 		],
-		"description": "Create an infer request"
+		"description": "Set the input tensor"
 	},
 	"Input Information": {
 		"prefix": "ov:inputinfo",
@@ -100,10 +100,11 @@
 	"Process output": {
 		"prefix": "ov:output",
 		"body": [
-			"auto output = infer_request.get_tensor(${1:\"tensor_name\"});",
-			"const float *output_buffer = output.data<const float>();"
+			"auto output_tensor = infer_request.get_tensor(${1:\"tensor_name\"});",
+			"// auto output_tensor = infer_request.get_output_tensor(0);",
+			"const float *output_buffer = output_tensor.data<const float>();"
 		],
-		"description": "Process output data"
+		"description": "Process output tensor"
 	},
 	"Change input shape": {
 		"prefix": "ov:reshape",
